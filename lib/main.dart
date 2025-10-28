@@ -1,0 +1,66 @@
+import 'package:distribuidora_app_new/views/asignar_rol_view.dart';
+import 'package:distribuidora_app_new/views/bodega_view.dart';
+import 'package:distribuidora_app_new/views/categoria_view.dart';
+import 'package:distribuidora_app_new/views/cliente_view.dart';
+import 'package:distribuidora_app_new/views/compra_view.dart';
+import 'package:distribuidora_app_new/views/inventario_view.dart';
+import 'package:distribuidora_app_new/views/lote_view.dart';
+import 'package:distribuidora_app_new/views/producto_view.dart';
+import 'package:distribuidora_app_new/views/rol_view.dart';
+import 'package:distribuidora_app_new/views/unidad_de_medida_view.dart';
+import 'package:distribuidora_app_new/views/usuario_view.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart'; // ✅ IMPORTANTE
+import 'views/login_view.dart';
+import 'views/home_view.dart';
+import 'views/marca_view.dart';
+import 'views/proveedor_view.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Distribuidora Walter',
+      theme: ThemeData(
+        fontFamily: 'Roboto',
+        scaffoldBackgroundColor: const Color(0xFF121212),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurpleAccent,
+          brightness: Brightness.dark,
+        ),
+      ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('es', 'ES'), // ✅ Esto hace que el DatePicker y otros widgets estén en español
+      ],
+      home: const LoginPantallaPremiumAnimada(),
+      routes: {
+        'home': (_) => const HomeViewPremium(),
+        'categoria': (_) => const CategoriaView(),
+        'marca': (_) => const MarcaView(),
+        'cliente': (context) => ClienteView(),
+        'proveedor': (context) => ProveedorView(),
+        'usuario': (context) => UsuarioView(),
+        'rol': (context) => RolView(),
+        'asignarRol': (context) => AsignarRolView(),
+        'bodega': (context) => BodegaView(),
+        'producto': (_) => const ProductoView(),
+        'unidadMedida': (_) => const UnidadMedidaView(),
+        'compra': (_) => const CompraView(),
+        'lote': (_) => const LoteView(),
+        'inventario': (_) => const InventarioView(),
+      },
+    );
+  }
+}
