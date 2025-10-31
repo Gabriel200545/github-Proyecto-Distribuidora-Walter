@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import '../models/producto_model.dart';
+import '../models/categoria_model.dart';
+import '../models/marca_model.dart';
+import '../models/unidad_medida_model.dart';
 import '../services/producto_service.dart';
+import '../services/categoria_service.dart';
+import '../services/marca_service.dart';
+import '../services/unidad_de_medida_service.dart';
 
 class ProductoView extends StatefulWidget {
   const ProductoView({super.key});
@@ -11,32 +17,33 @@ class ProductoView extends StatefulWidget {
 
 class _ProductoViewState extends State<ProductoView> {
   List<Producto> productos = [];
+  List<Categoria> categorias = [];
+  List<Marca> marcas = [];
+  List<UnidadMedida> unidades = [];
+
   final TextEditingController _nombreController = TextEditingController();
   final TextEditingController _descripcionController = TextEditingController();
-  final TextEditingController _idCategoriaController = TextEditingController();
-  final TextEditingController _idMarcaController = TextEditingController();
-  final TextEditingController _idUnidadController = TextEditingController();
+
+  Categoria? _categoriaSeleccionada;
+  Marca? _marcaSeleccionada;
+  UnidadMedida? _unidadSeleccionada;
 
   @override
   void initState() {
     super.initState();
-    _loadProductos();
+    _loadData();
   }
 
-  @override
-  void dispose() {
-    _nombreController.dispose();
-    _descripcionController.dispose();
-    _idCategoriaController.dispose();
-    _idMarcaController.dispose();
-    _idUnidadController.dispose();
-    super.dispose();
-  }
-
-  Future<void> _loadProductos() async {
-    final data = await ProductoService.getProductos();
+  Future<void> _loadData() async {
+    final prodData = await ProductoService.getProductos();
+    final catData = await CategoriaService.getCategorias();
+    final marData = await MarcaService.getMarcas();
+    final uniData = await UnidadMedidaService.getUnidades();
     setState(() {
-      productos = data;
+      productos = prodData;
+      categorias = catData;
+      marcas = marData;
+      unidades = uniData;
     });
   }
 
@@ -44,15 +51,24 @@ class _ProductoViewState extends State<ProductoView> {
     if (producto != null) {
       _nombreController.text = producto.nombre;
       _descripcionController.text = producto.descripcion;
-      _idCategoriaController.text = producto.idCategoria.toString();
-      _idMarcaController.text = producto.idMarca.toString();
-      _idUnidadController.text = producto.idUnidadMedida.toString();
+      _categoriaSeleccionada = categorias.firstWhere(
+        (c) => c.id == producto.idCategoria,
+        orElse: () => categorias.first,
+      );
+      _marcaSeleccionada = marcas.firstWhere(
+        (m) => m.idMarca == producto.idMarca,
+        orElse: () => marcas.first,
+      );
+      _unidadSeleccionada = unidades.firstWhere(
+        (u) => u.idUnidad == producto.idUnidadMedida,
+        orElse: () => unidades.first,
+      );
     } else {
       _nombreController.clear();
       _descripcionController.clear();
-      _idCategoriaController.clear();
-      _idMarcaController.clear();
-      _idUnidadController.clear();
+      _categoriaSeleccionada = null;
+      _marcaSeleccionada = null;
+      _unidadSeleccionada = null;
     }
 
     await showDialog(
@@ -83,32 +99,80 @@ class _ProductoViewState extends State<ProductoView> {
                   labelStyle: TextStyle(color: Colors.white70),
                 ),
               ),
-              TextField(
-                controller: _idCategoriaController,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<Categoria>(
+                initialValue: _categoriaSeleccionada,
                 decoration: const InputDecoration(
-                  labelText: 'ID Categoría',
+                  labelText: 'Categoría',
                   labelStyle: TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Color(0xFF1A033D),
                 ),
+                dropdownColor: const Color(0xFF1A033D),
+                style: const TextStyle(color: Colors.white),
+                items: categorias
+                    .map(
+                      (c) => DropdownMenuItem(
+                        value: c,
+                        child: Text(
+                          c.nombre,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) =>
+                    setState(() => _categoriaSeleccionada = value),
               ),
-              TextField(
-                controller: _idMarcaController,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<Marca>(
+                initialValue: _marcaSeleccionada,
                 decoration: const InputDecoration(
-                  labelText: 'ID Marca',
+                  labelText: 'Marca',
                   labelStyle: TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Color(0xFF1A033D),
                 ),
+                dropdownColor: const Color(0xFF1A033D),
+                style: const TextStyle(color: Colors.white),
+                items: marcas
+                    .map(
+                      (m) => DropdownMenuItem(
+                        value: m,
+                        child: Text(
+                          m.nombre,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) =>
+                    setState(() => _marcaSeleccionada = value),
               ),
-              TextField(
-                controller: _idUnidadController,
-                keyboardType: TextInputType.number,
-                style: const TextStyle(color: Colors.white),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<UnidadMedida>(
+                initialValue: _unidadSeleccionada,
                 decoration: const InputDecoration(
-                  labelText: 'ID Unidad Medida',
+                  labelText: 'Unidad Medida',
                   labelStyle: TextStyle(color: Colors.white70),
+                  filled: true,
+                  fillColor: Color(0xFF1A033D),
                 ),
+                dropdownColor: const Color(0xFF1A033D),
+                style: const TextStyle(color: Colors.white),
+                items: unidades
+                    .map(
+                      (u) => DropdownMenuItem(
+                        value: u,
+                        child: Text(
+                          u.nombre,
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) =>
+                    setState(() => _unidadSeleccionada = value),
               ),
             ],
           ),
@@ -116,15 +180,18 @@ class _ProductoViewState extends State<ProductoView> {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
           ),
           TextButton(
             onPressed: () async {
               final nombre = _nombreController.text.trim();
               final descripcion = _descripcionController.text.trim();
-              final idCategoria = int.tryParse(_idCategoriaController.text.trim()) ?? 0;
-              final idMarca = int.tryParse(_idMarcaController.text.trim()) ?? 0;
-              final idUnidad = int.tryParse(_idUnidadController.text.trim()) ?? 0;
+              final idCategoria = _categoriaSeleccionada?.id ?? 0;
+              final idMarca = _marcaSeleccionada?.idMarca ?? 0;
+              final idUnidad = _unidadSeleccionada?.idUnidad ?? 0;
 
               if (nombre.isEmpty || descripcion.isEmpty) return;
 
@@ -149,9 +216,12 @@ class _ProductoViewState extends State<ProductoView> {
               }
 
               Navigator.pop(context);
-              _loadProductos();
+              _loadData();
             },
-            child: const Text('Guardar', style: TextStyle(color: Colors.purpleAccent)),
+            child: const Text(
+              'Guardar',
+              style: TextStyle(color: Colors.purpleAccent),
+            ),
           ),
         ],
       ),
@@ -163,16 +233,28 @@ class _ProductoViewState extends State<ProductoView> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF120321),
-        title: const Text('Confirmar eliminación', style: TextStyle(color: Colors.white)),
-        content: const Text('¿Seguro que quieres eliminar este producto?', style: TextStyle(color: Colors.white70)),
+        title: const Text(
+          'Confirmar eliminación',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          '¿Seguro que quieres eliminar este producto?',
+          style: TextStyle(color: Colors.white70),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar', style: TextStyle(color: Colors.white70)),
+            child: const Text(
+              'Cancelar',
+              style: TextStyle(color: Colors.white70),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Eliminar', style: TextStyle(color: Colors.redAccent)),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Colors.redAccent),
+            ),
           ),
         ],
       ),
@@ -180,7 +262,7 @@ class _ProductoViewState extends State<ProductoView> {
 
     if (confirmar == true) {
       await ProductoService.deleteProducto(producto.idProducto);
-      _loadProductos();
+      _loadData();
     }
   }
 
@@ -202,12 +284,39 @@ class _ProductoViewState extends State<ProductoView> {
         itemCount: productos.length,
         itemBuilder: (context, index) {
           final producto = productos[index];
+          final nombreCategoria = categorias
+              .firstWhere(
+                (c) => c.id == producto.idCategoria,
+                orElse: () => Categoria(id: 0, nombre: 'N/A'),
+              )
+              .nombre;
+          final nombreMarca = marcas
+              .firstWhere(
+                (m) => m.idMarca == producto.idMarca,
+                orElse: () => Marca(idMarca: 0, nombre: 'N/A'),
+              )
+              .nombre;
+          final nombreUnidad = unidades
+              .firstWhere(
+                (u) => u.idUnidad == producto.idUnidadMedida,
+                orElse: () => UnidadMedida(
+                  idUnidad: 0,
+                  nombre: 'N/A',
+                  abreviacion: '',
+                  tipoUnidad: '',
+                ),
+              )
+              .nombre;
+
           return Card(
             color: const Color(0xFF1A033D),
             child: ListTile(
-              title: Text(producto.nombre, style: const TextStyle(color: Colors.white)),
+              title: Text(
+                producto.nombre,
+                style: const TextStyle(color: Colors.white),
+              ),
               subtitle: Text(
-                'Descripción: ${producto.descripcion}\nCat: ${producto.idCategoria}, Marca: ${producto.idMarca}, Unidad: ${producto.idUnidadMedida}',
+                'Descripción: ${producto.descripcion}\nCat: $nombreCategoria, Marca: $nombreMarca, Unidad: $nombreUnidad',
                 style: const TextStyle(color: Colors.white70),
               ),
               isThreeLine: true,

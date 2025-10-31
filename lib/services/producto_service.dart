@@ -3,9 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/producto_model.dart';
 
 class ProductoService {
-  // Cambia la URL a tu API real
-  static const String baseUrl = "https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/Product";
-
+  static const String baseUrl =
+      "https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/Product";
 
   // GET all
   static Future<List<Producto>> getProductos() async {
