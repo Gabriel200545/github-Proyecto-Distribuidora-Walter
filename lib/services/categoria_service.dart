@@ -4,7 +4,8 @@ import '../models/categoria_model.dart';
 
 class CategoriaService {
   // Cambia la URL a tu ngrok o tu API real
-  static const String baseUrl = "https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/Categoria";
+  static const String baseUrl =
+      "https://webapi20251108112945-d5c0b7fge9c6a8fh.westus-01.azurewebsites.net/api/Categoria";
 
   // GET all
   static Future<List<Categoria>> getCategorias() async {

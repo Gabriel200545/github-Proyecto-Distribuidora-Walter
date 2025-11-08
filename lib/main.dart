@@ -3,6 +3,7 @@ import 'package:distribuidora_app_new/views/bodega_view.dart';
 import 'package:distribuidora_app_new/views/categoria_view.dart';
 import 'package:distribuidora_app_new/views/cliente_view.dart';
 import 'package:distribuidora_app_new/views/compra_view.dart';
+import 'package:distribuidora_app_new/views/inventario_lote_view.dart';
 import 'package:distribuidora_app_new/views/inventario_view.dart';
 import 'package:distribuidora_app_new/views/lote_view.dart';
 import 'package:distribuidora_app_new/views/producto_view.dart';
@@ -42,7 +43,10 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('es', 'ES'), // ✅ Esto hace que el DatePicker y otros widgets estén en español
+        Locale(
+          'es',
+          'ES',
+        ), // ✅ Esto hace que el DatePicker y otros widgets estén en español
       ],
       home: const LoginPantallaPremiumAnimada(),
       routes: {
@@ -59,7 +63,7 @@ class MyApp extends StatelessWidget {
         'unidadMedida': (_) => const UnidadMedidaView(),
         'compra': (_) => const CompraView(),
         'lote': (_) => const LoteView(),
-        'inventario': (_) => const InventarioView(),
+        'inventario': (_) => const InventarioLoteView(),
       },
     );
   }

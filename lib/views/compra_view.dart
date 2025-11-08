@@ -18,7 +18,8 @@ class CompraView extends StatefulWidget {
   State<CompraView> createState() => _CompraViewState();
 }
 
-class _CompraViewState extends State<CompraView> {
+class _CompraViewState extends State<CompraView>
+    with SingleTickerProviderStateMixin {
   List<Proveedor> proveedores = [];
   List<Producto> productos = [];
   List<UnidadMedida> unidades = [];
@@ -27,10 +28,13 @@ class _CompraViewState extends State<CompraView> {
   List<DetalleCompra> detalles = [];
 
   Proveedor? proveedorSeleccionado;
+  bool proveedorVisible = true;
+  bool mostrarFormulario = false;
+
+  // Campos del formulario
   Producto? productoSeleccionado;
   UnidadMedida? unidadSeleccionada;
   Bodega? bodegaSeleccionada;
-
   final _cantidadCtrl = TextEditingController();
   final _precioCtrl = TextEditingController();
   final _fechaFabCtrl = TextEditingController();
@@ -81,7 +85,7 @@ class _CompraViewState extends State<CompraView> {
     }
   }
 
-  void agregarDetalle() {
+  void guardarProducto() {
     if (productoSeleccionado == null ||
         unidadSeleccionada == null ||
         bodegaSeleccionada == null) {
@@ -101,7 +105,6 @@ class _CompraViewState extends State<CompraView> {
     }
 
     final lote = "L${DateFormat('yyyyMMddHHmmss').format(DateTime.now())}";
-
     final detalle = DetalleCompra(
       idProducto: productoSeleccionado!.idProducto,
       cantidad: cantidad,
@@ -115,6 +118,14 @@ class _CompraViewState extends State<CompraView> {
 
     setState(() {
       detalles.add(detalle);
+
+      // Ocultar formulario
+      mostrarFormulario = false;
+
+      // Limpiar formulario
+      productoSeleccionado = null;
+      unidadSeleccionada = null;
+      bodegaSeleccionada = null;
       _cantidadCtrl.clear();
       _precioCtrl.clear();
       _fechaFabCtrl.clear();
@@ -153,6 +164,8 @@ class _CompraViewState extends State<CompraView> {
       );
       setState(() {
         detalles.clear();
+        proveedorVisible = true;
+        proveedorSeleccionado = null;
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -161,364 +174,419 @@ class _CompraViewState extends State<CompraView> {
     }
   }
 
+  InputDecoration _inputDecoration(String label) {
+    return InputDecoration(
+      labelText: label,
+      border: const OutlineInputBorder(),
+      filled: true,
+      fillColor: const Color(0xFF1E1E1E),
+      labelStyle: const TextStyle(color: Colors.white, fontSize: 12),
+      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
+    );
+  }
+
+  Widget _textField(
+    TextEditingController ctrl,
+    String label, {
+    VoidCallback? onTap,
+  }) {
+    return TextField(
+      controller: ctrl,
+      readOnly: onTap != null,
+      onTap: onTap,
+      decoration: _inputDecoration(label).copyWith(
+        suffixIcon: onTap != null
+            ? const Icon(Icons.calendar_today, size: 18, color: Colors.white)
+            : null,
+      ),
+      style: const TextStyle(color: Colors.white, fontSize: 12),
+      keyboardType: TextInputType.number,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(symbol: 'C\$ ', decimalDigits: 2);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F2FF),
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text(
           "Registrar Compra",
-          style: TextStyle(fontWeight: FontWeight.w600),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
         ),
         backgroundColor: Colors.deepPurple,
         centerTitle: true,
         elevation: 3,
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: RefreshIndicator(
-                onRefresh: cargarDatos,
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    children: [
-                      _buildCard(
-                        title: "Proveedor",
-                        child: DropdownButtonFormField<Proveedor>(
-                          initialValue: proveedorSeleccionado,
-                          decoration: const InputDecoration(
-                            labelText: "Selecciona proveedor",
-                            border: OutlineInputBorder(),
-                          ),
-                          items: proveedores
-                              .map(
-                                (p) => DropdownMenuItem(
-                                  value: p,
-                                  child: Text(p.nombre),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (p) =>
-                              setState(() => proveedorSeleccionado = p),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      _buildCard(
-                        title: "Agregar producto",
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            DropdownButtonFormField<Producto>(
-                              initialValue: productoSeleccionado,
-                              decoration: const InputDecoration(
-                                labelText: "Producto",
-                                border: OutlineInputBorder(),
-                              ),
-                              items: productos
-                                  .map(
-                                    (p) => DropdownMenuItem(
-                                      value: p,
-                                      child: Text(p.nombre),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (p) {
-                                setState(() {
-                                  productoSeleccionado = p;
-                                  filtrarUnidadesPorProducto();
-                                });
-                              },
-                            ),
-                            const SizedBox(height: 12),
-                            DropdownButtonFormField<UnidadMedida>(
-                              initialValue: unidadSeleccionada,
-                              decoration: const InputDecoration(
-                                labelText: "Unidad de medida",
-                                border: OutlineInputBorder(),
-                              ),
-                              items: unidadesFiltradas
-                                  .map(
-                                    (u) => DropdownMenuItem(
-                                      value: u,
-                                      child: Text(
-                                        "${u.nombre} (${u.abreviacion}) - ${u.tipoUnidad}",
-                                      ),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (u) =>
-                                  setState(() => unidadSeleccionada = u),
-                            ),
-                            const SizedBox(height: 12),
-                            DropdownButtonFormField<Bodega>(
-                              initialValue: bodegaSeleccionada,
-                              decoration: const InputDecoration(
-                                labelText: "Bodega",
-                                border: OutlineInputBorder(),
-                              ),
-                              items: bodegas
-                                  .map(
-                                    (b) => DropdownMenuItem(
-                                      value: b,
-                                      child: Text(b.nombre),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (b) =>
-                                  setState(() => bodegaSeleccionada = b),
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: _cantidadCtrl,
-                                    decoration: const InputDecoration(
-                                      labelText: "Cantidad",
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: TextField(
-                                    controller: _precioCtrl,
-                                    decoration: const InputDecoration(
-                                      labelText: "Precio unitario",
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    keyboardType: TextInputType.number,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 12),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: _fechaFabCtrl,
-                                    readOnly: true,
-                                    onTap: () =>
-                                        seleccionarFecha(_fechaFabCtrl),
-                                    decoration: const InputDecoration(
-                                      labelText: "Fecha fabricación",
-                                      border: OutlineInputBorder(),
-                                      suffixIcon: Icon(Icons.calendar_today),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Expanded(
-                                  child: TextField(
-                                    controller: _fechaCadCtrl,
-                                    readOnly: true,
-                                    onTap: () =>
-                                        seleccionarFecha(_fechaCadCtrl),
-                                    decoration: const InputDecoration(
-                                      labelText: "Fecha caducidad",
-                                      border: OutlineInputBorder(),
-                                      suffixIcon: Icon(Icons.calendar_today),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton.icon(
-                                onPressed: agregarDetalle,
-                                icon: const Icon(Icons.add_circle_outline),
-                                label: const Text("Agregar Detalle"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.deepPurple,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                    horizontal: 20,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  textStyle: const TextStyle(fontSize: 15),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // 🧾 Tabla con scroll interno
-                      if (detalles.isNotEmpty)
-                        _buildCard(
-                          title: "Detalles de la compra",
-                          child: SizedBox(
-                            height: 300,
-                            child: Scrollbar(
-                              thumbVisibility: true,
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: DataTable(
-                                    headingRowColor: WidgetStateProperty.all(
-                                      Colors.deepPurple.shade50,
-                                    ),
-                                    columnSpacing: 16,
-                                    headingTextStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.deepPurple,
-                                    ),
-                                    border: TableBorder.symmetric(
-                                      inside: BorderSide(
-                                        color: Colors.deepPurple.withOpacity(
-                                          0.1,
-                                        ),
-                                      ),
-                                    ),
-                                    columns: const [
-                                      DataColumn(label: Text("Producto")),
-                                      DataColumn(label: Text("Unidad")),
-                                      DataColumn(label: Text("Cant.")),
-                                      DataColumn(label: Text("Precio")),
-                                      DataColumn(label: Text("Subtotal")),
-                                      DataColumn(label: Text("Eliminar")),
-                                    ],
-                                    rows: List.generate(detalles.length, (i) {
-                                      final d = detalles[i];
-                                      final producto = productos.firstWhere(
-                                        (p) => p.idProducto == d.idProducto,
-                                        orElse: () => Producto(
-                                          idProducto: 0,
-                                          nombre: "Desconocido",
-                                          descripcion: "",
-                                          idCategoria: 0,
-                                          idMarca: 0,
-                                          idUnidadMedida: 0,
-                                        ),
-                                      );
-                                      final unidad = unidades.firstWhere(
-                                        (u) => u.idUnidad == d.idUnidadMedida,
-                                        orElse: () => UnidadMedida(
-                                          idUnidad: 0,
-                                          nombre: "Desconocida",
-                                          abreviacion: "-",
-                                          tipoUnidad: "-",
-                                        ),
-                                      );
-                                      return DataRow(
-                                        cells: [
-                                          DataCell(Text(producto.nombre)),
-                                          DataCell(Text(unidad.abreviacion)),
-                                          DataCell(
-                                            Text(d.cantidad.toStringAsFixed(2)),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                              formatter.format(
-                                                d.precioUnitario,
-                                              ),
-                                            ),
-                                          ),
-                                          DataCell(
-                                            Text(
-                                              formatter.format(
-                                                d.cantidad * d.precioUnitario,
-                                              ),
-                                            ),
-                                          ),
-                                          DataCell(
-                                            IconButton(
-                                              icon: const Icon(
-                                                Icons.delete_forever_rounded,
-                                                color: Colors.redAccent,
-                                                size: 22,
-                                              ),
-                                              onPressed: () =>
-                                                  eliminarDetalle(i),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    }),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            Container(
-              width: double.infinity,
-              decoration: const BoxDecoration(
-                color: Colors.deepPurple,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(8),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    "Total: ${formatter.format(totalGeneral)}",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    onPressed: registrarCompra,
-                    icon: const Icon(Icons.check_circle_outline),
-                    label: const Text("Registrar Compra"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green[600],
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 30,
-                      ),
-                      textStyle: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  // Proveedor visible solo si proveedorVisible es true
+                  if (proveedorVisible)
+                    _buildCard(
+                      title: "Proveedor",
+                      child: DropdownButtonFormField<Proveedor>(
+                        dropdownColor: const Color(0xFF1E1E1E),
+                        value: proveedorSeleccionado,
+                        decoration: _inputDecoration("Selecciona proveedor"),
+                        items: proveedores
+                            .map(
+                              (p) => DropdownMenuItem(
+                                value: p,
+                                child: Text(
+                                  p.nombre,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                        onChanged: (p) =>
+                            setState(() => proveedorSeleccionado = p),
                       ),
                     ),
+                  const SizedBox(height: 8),
+
+                  // Formulario de producto
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 300),
+                    child: mostrarFormulario
+                        ? _buildCard(
+                            title: "Agregar Producto",
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                DropdownButtonFormField<Producto>(
+                                  dropdownColor: const Color(0xFF1E1E1E),
+                                  decoration: _inputDecoration("Producto"),
+                                  value: productoSeleccionado,
+                                  items: productos
+                                      .map(
+                                        (p) => DropdownMenuItem(
+                                          value: p,
+                                          child: Text(
+                                            p.nombre,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  onChanged: (p) {
+                                    setState(() {
+                                      productoSeleccionado = p;
+                                      filtrarUnidadesPorProducto();
+                                    });
+                                  },
+                                ),
+                                const SizedBox(height: 6),
+                                DropdownButtonFormField<UnidadMedida>(
+                                  dropdownColor: const Color(0xFF1E1E1E),
+                                  decoration: _inputDecoration(
+                                    "Unidad de medida",
+                                  ),
+                                  value: unidadSeleccionada,
+                                  items: unidadesFiltradas
+                                      .map(
+                                        (u) => DropdownMenuItem(
+                                          value: u,
+                                          child: Text(
+                                            "${u.nombre} (${u.abreviacion})",
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  onChanged: (u) =>
+                                      setState(() => unidadSeleccionada = u),
+                                ),
+                                const SizedBox(height: 6),
+                                DropdownButtonFormField<Bodega>(
+                                  dropdownColor: const Color(0xFF1E1E1E),
+                                  decoration: _inputDecoration("Bodega"),
+                                  value: bodegaSeleccionada,
+                                  items: bodegas
+                                      .map(
+                                        (b) => DropdownMenuItem(
+                                          value: b,
+                                          child: Text(
+                                            b.nombre,
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      )
+                                      .toList(),
+                                  onChanged: (b) =>
+                                      setState(() => bodegaSeleccionada = b),
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _textField(
+                                        _cantidadCtrl,
+                                        "Cantidad",
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: _textField(
+                                        _precioCtrl,
+                                        "Precio unitario",
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: _textField(
+                                        _fechaFabCtrl,
+                                        "Fecha fabricación",
+                                        onTap: () =>
+                                            seleccionarFecha(_fechaFabCtrl),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Expanded(
+                                      child: _textField(
+                                        _fechaCadCtrl,
+                                        "Fecha caducidad",
+                                        onTap: () =>
+                                            seleccionarFecha(_fechaCadCtrl),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Align(
+                                  alignment: Alignment.centerRight,
+                                  child: ElevatedButton.icon(
+                                    onPressed: guardarProducto,
+                                    icon: const Icon(
+                                      Icons.save_outlined,
+                                      size: 16,
+                                    ),
+                                    label: const Text(
+                                      "Guardar",
+                                      style: TextStyle(fontSize: 12),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      foregroundColor: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                   ),
+
+                  const SizedBox(height: 8),
+
+                  // Tabla de productos
+                  detalles.isEmpty
+                      ? const Center(
+                          child: Text(
+                            "No hay productos agregados",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          scrollDirection: Axis.horizontal,
+                          child: DataTable(
+                            headingRowColor: MaterialStateProperty.all(
+                              Colors.deepPurple.shade100,
+                            ),
+                            headingTextStyle: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.deepPurple,
+                              fontSize: 12,
+                            ),
+                            dataRowColor: MaterialStateProperty.all(
+                              Colors.grey.shade900,
+                            ),
+                            columnSpacing: 12,
+                            border: TableBorder.symmetric(
+                              inside: BorderSide(
+                                color: Colors.deepPurple.withOpacity(0.3),
+                              ),
+                            ),
+                            columns: const [
+                              DataColumn(label: Text("Producto")),
+                              DataColumn(label: Text("Unidad")),
+                              DataColumn(label: Text("Cant.")),
+                              DataColumn(label: Text("Precio")),
+                              DataColumn(label: Text("Subtotal")),
+                              DataColumn(label: Text("Eliminar")),
+                            ],
+                            rows: List.generate(detalles.length, (i) {
+                              final d = detalles[i];
+                              final producto = productos.firstWhere(
+                                (p) => p.idProducto == d.idProducto,
+                                orElse: () => Producto(
+                                  idProducto: 0,
+                                  nombre: "Desconocido",
+                                  descripcion: "",
+                                  idCategoria: 0,
+                                  idMarca: 0,
+                                  idUnidadMedida: 0,
+                                ),
+                              );
+                              final unidad = unidades.firstWhere(
+                                (u) => u.idUnidad == d.idUnidadMedida,
+                                orElse: () => UnidadMedida(
+                                  idUnidad: 0,
+                                  nombre: "Desconocida",
+                                  abreviacion: "-",
+                                  tipoUnidad: "-",
+                                ),
+                              );
+                              return DataRow(
+                                cells: [
+                                  DataCell(
+                                    Text(
+                                      producto.nombre,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      unidad.abreviacion,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      d.cantidad.toStringAsFixed(2),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      formatter.format(d.precioUnitario),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    Text(
+                                      formatter.format(
+                                        d.cantidad * d.precioUnitario,
+                                      ),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ),
+                                  DataCell(
+                                    IconButton(
+                                      icon: const Icon(
+                                        Icons.delete_forever_rounded,
+                                        color: Colors.redAccent,
+                                        size: 18,
+                                      ),
+                                      onPressed: () => eliminarDetalle(i),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }),
+                          ),
+                        ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          // Footer fijo
+          Container(
+            width: double.infinity,
+            color: Colors.deepPurple,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Total: ${formatter.format(totalGeneral)}",
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
+                Row(
+                  children: [
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {
+                          mostrarFormulario = true;
+                          proveedorVisible = false;
+                        });
+                      },
+                      icon: const Icon(Icons.add_circle_outline, size: 16),
+                      label: const Text(
+                        "Agregar producto",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    ElevatedButton.icon(
+                      onPressed: registrarCompra,
+                      icon: const Icon(Icons.check_circle_outline, size: 16),
+                      label: const Text(
+                        "Registrar Compra",
+                        style: TextStyle(fontSize: 12),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green[600],
+                        foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildCard({required String title, required Widget child}) {
     return Card(
-      elevation: 6,
+      color: const Color(0xFF1E1E1E),
+      elevation: 4,
       shadowColor: Colors.deepPurple.withOpacity(0.2),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
-        padding: const EdgeInsets.all(18.0),
+        padding: const EdgeInsets.all(12),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -526,11 +594,11 @@ class _CompraViewState extends State<CompraView> {
               title,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 17,
+                fontSize: 14,
                 color: Colors.deepPurple,
               ),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 8),
             child,
           ],
         ),

@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/cliente_model.dart';
 
 class ClienteService {
-  static const String baseUrl = 'https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/Cliente';
+  static const String baseUrl =
+      'https://webapi20251108112945-d5c0b7fge9c6a8fh.westus-01.azurewebsites.net/api/Cliente';
 
   static Future<List<Cliente>> getClientes() async {
     final response = await http.get(Uri.parse(baseUrl));

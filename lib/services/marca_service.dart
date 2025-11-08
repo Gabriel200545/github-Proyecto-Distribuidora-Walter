@@ -3,7 +3,8 @@ import 'package:http/http.dart' as http;
 import '../models/marca_model.dart';
 
 class MarcaService {
-  static const String baseUrl = 'https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/Marca';
+  static const String baseUrl =
+      'https://webapi20251108112945-d5c0b7fge9c6a8fh.westus-01.azurewebsites.net/api/Marca';
 
   static Future<List<Marca>> getMarcas() async {
     final response = await http.get(Uri.parse(baseUrl));
@@ -15,20 +16,18 @@ class MarcaService {
     }
   }
 
-static Future<bool> createMarca(Marca marca) async {
-  // No enviar IdMarca en el POST, ya que el backend lo genera automáticamente
-  final Map<String, dynamic> body = {
-    'Nombre': marca.nombre,
-  };
+  static Future<bool> createMarca(Marca marca) async {
+    // No enviar IdMarca en el POST, ya que el backend lo genera automáticamente
+    final Map<String, dynamic> body = {'Nombre': marca.nombre};
 
-  final response = await http.post(
-    Uri.parse(baseUrl),
-    headers: {'Content-Type': 'application/json'},
-    body: json.encode(body),
-  );
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(body),
+    );
 
-  return response.statusCode == 200;
-}
+    return response.statusCode == 200;
+  }
 
   static Future<bool> updateMarca(Marca marca) async {
     final response = await http.put(

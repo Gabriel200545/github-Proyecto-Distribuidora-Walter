@@ -1,10 +1,11 @@
 import 'package:distribuidora_app_new/views/asignar_rol_view.dart';
 import 'package:distribuidora_app_new/views/compra_view.dart';
+import 'package:distribuidora_app_new/views/inventario_lote_view.dart';
 import 'package:distribuidora_app_new/views/inventario_view.dart';
 import 'package:distribuidora_app_new/views/lote_view.dart';
 import 'package:distribuidora_app_new/views/producto_view.dart';
 import 'package:distribuidora_app_new/views/unidad_de_medida_view.dart';
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'dart:math';
 import 'cliente_view.dart';
 import 'proveedor_view.dart';
@@ -31,7 +32,12 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
     'Ventas': ['Clientes', 'Registrar Venta', 'Consultar Venta'],
     'Inventario': ['Lote', 'Inventario'],
     'Devolucion': ['Devolucion Compra', 'Devolucion Venta'],
-    'Configuracion': ['Usuarios', 'Asignar Roles', 'Rol', 'Bodega'], // <-- Ya está
+    'Configuracion': [
+      'Usuarios',
+      'Asignar Roles',
+      'Rol',
+      'Bodega',
+    ], // <-- Ya está
   };
 
   final Map<String, IconData> menuIcons = {
@@ -64,9 +70,10 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
   @override
   void initState() {
     super.initState();
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 20))
-          ..repeat();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 20),
+    )..repeat();
     for (var key in menu.keys) {
       _expansionState[key] = false;
     }
@@ -91,10 +98,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
           Container(
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  Color(0xFF120321),
-                  Color(0xFF1A033D),
-                ],
+                colors: [Color(0xFF120321), Color(0xFF1A033D)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -106,8 +110,10 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
               builder: (context, child) {
                 final movimiento = _movimiento(_controller.value + b.offset);
                 return Align(
-                  alignment: Alignment(-1 + b.leftFactor * 2,
-                      -1 + b.topFactor * 2),
+                  alignment: Alignment(
+                    -1 + b.leftFactor * 2,
+                    -1 + b.topFactor * 2,
+                  ),
                   child: Transform.translate(
                     offset: Offset(movimiento * 20, movimiento * 20),
                     child: _burbuja3D(b.size, b.color),
@@ -128,23 +134,29 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Builder(builder: (context) {
-                        return IconButton(
-                          icon: const Icon(Icons.menu,
-                              color: Colors.white, size: 34),
-                          onPressed: () {
-                            Scaffold.of(context).openDrawer();
-                          },
-                        );
-                      }),
+                      Builder(
+                        builder: (context) {
+                          return IconButton(
+                            icon: const Icon(
+                              Icons.menu,
+                              color: Colors.white,
+                              size: 34,
+                            ),
+                            onPressed: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                          );
+                        },
+                      ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Text(
                           'Distribuidora Walter',
                           style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold),
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -163,15 +175,17 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                           child: Text(
                             'Reportes',
                             style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 22,
-                                fontWeight: FontWeight.w600,
-                                shadows: [
-                                  Shadow(
-                                      color: Colors.black45,
-                                      offset: Offset(1, 1),
-                                      blurRadius: 4)
-                                ]),
+                              color: Colors.white,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black45,
+                                  offset: Offset(1, 1),
+                                  blurRadius: 4,
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                         Wrap(
@@ -180,19 +194,40 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                           alignment: WrapAlignment.center,
                           children: [
                             _tarjetaReporteMejorada(
-                                'Ventas por Día', '120 ventas', Icons.show_chart),
+                              'Ventas por Día',
+                              '120 ventas',
+                              Icons.show_chart,
+                            ),
                             _tarjetaReporteMejorada(
-                                'Inventario Crítico', 'Harina: 5 uds', Icons.warning),
+                              'Inventario Crítico',
+                              'Harina: 5 uds',
+                              Icons.warning,
+                            ),
                             _tarjetaReporteMejorada(
-                                'Ingresos Mensuales', '\$12,500', Icons.monetization_on),
+                              'Ingresos Mensuales',
+                              '\$12,500',
+                              Icons.monetization_on,
+                            ),
                             _tarjetaReporteMejorada(
-                                'Gastos Mensuales', '\$5,200', Icons.money_off),
+                              'Gastos Mensuales',
+                              '\$5,200',
+                              Icons.money_off,
+                            ),
                             _tarjetaReporteMejorada(
-                                'Clientes Activos', '85', Icons.people),
+                              'Clientes Activos',
+                              '85',
+                              Icons.people,
+                            ),
                             _tarjetaReporteMejorada(
-                                'Productos Disponibles', '320', Icons.shopping_cart),
+                              'Productos Disponibles',
+                              '320',
+                              Icons.shopping_cart,
+                            ),
                             _tarjetaReporteMejorada(
-                                'Devoluciones', '3', Icons.assignment_return),
+                              'Devoluciones',
+                              '3',
+                              Icons.assignment_return,
+                            ),
                           ],
                         ),
                       ],
@@ -220,12 +255,15 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
             end: Alignment.bottomRight,
           ),
           borderRadius: const BorderRadius.only(
-              topRight: Radius.circular(24), bottomRight: Radius.circular(24)),
+            topRight: Radius.circular(24),
+            bottomRight: Radius.circular(24),
+          ),
           boxShadow: [
             BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                blurRadius: 8,
-                offset: const Offset(3, 0)),
+              color: Colors.black.withOpacity(0.25),
+              blurRadius: 8,
+              offset: const Offset(3, 0),
+            ),
           ],
         ),
         child: ListView(
@@ -237,9 +275,10 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                 child: Text(
                   'Menu',
                   style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -252,8 +291,9 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                       setState(() {
                         _expansionState[entry.key] =
                             !(_expansionState[entry.key] ?? false);
-                        _menuSeleccionado =
-                            _expansionState[entry.key]! ? entry.key : '';
+                        _menuSeleccionado = _expansionState[entry.key]!
+                            ? entry.key
+                            : '';
                         _expansionState.forEach((k, v) {
                           if (k != entry.key) _expansionState[k] = false;
                         });
@@ -263,7 +303,9 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                       duration: const Duration(milliseconds: 300),
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 12),
+                        vertical: 10,
+                        horizontal: 12,
+                      ),
                       decoration: BoxDecoration(
                         color: seleccionado
                             ? Colors.white.withOpacity(0.9)
@@ -272,25 +314,30 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                         boxShadow: seleccionado
                             ? [
                                 BoxShadow(
-                                    color: Colors.black.withOpacity(0.15),
-                                    blurRadius: 6,
-                                    offset: const Offset(2, 2))
+                                  color: Colors.black.withOpacity(0.15),
+                                  blurRadius: 6,
+                                  offset: const Offset(2, 2),
+                                ),
                               ]
                             : [],
                       ),
                       child: Row(
                         children: [
-                          Icon(menuIcons[entry.key],
-                              color: seleccionado ? Colors.black : Colors.white),
+                          Icon(
+                            menuIcons[entry.key],
+                            color: seleccionado ? Colors.black : Colors.white,
+                          ),
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
                               entry.key,
                               style: TextStyle(
-                                  color:
-                                      seleccionado ? Colors.black : Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 18),
+                                color: seleccionado
+                                    ? Colors.black
+                                    : Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
                             ),
                           ),
                           Icon(
@@ -307,99 +354,144 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                     firstChild: Container(),
                     secondChild: Column(
                       children: entry.value
-                          .map((subitem) => Padding(
-                                padding: const EdgeInsets.symmetric(vertical: 2),
-                                child: InkWell(
-                                  borderRadius: BorderRadius.circular(8),
-                                  splashColor: Colors.white24,
-                                  highlightColor: Colors.white10,
-                                  onTap: () {
+                          .map(
+                            (subitem) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(8),
+                                splashColor: Colors.white24,
+                                highlightColor: Colors.white10,
+                                onTap: () {
                                   // Navegación
-if (subitem == 'Categoría') {
-  Navigator.pushNamed(context, 'categoria');
-} else if (subitem == 'Marca') {
-  Navigator.pushNamed(context, 'marca');
-} else if (subitem == 'Clientes') {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const ClienteView()),
-  );
-} else if (subitem == 'Proveedor') {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const ProveedorView()),
-  );
-} else if (subitem == 'Usuarios') {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const UsuarioView()),
-  );
-} else if (subitem == 'Asignar Roles') {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const AsignarRolView()),
-  );
-} else if (subitem == 'Rol') {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const RolView()),
-  );
-} else if (subitem == 'Bodega') {
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const BodegaView()),
-  );
-} else if (subitem == 'Producto') { // 🛒 Nuevo submenú Producto
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const ProductoView()),
-  );
-} else if (subitem == 'Unidad de Medida') { // ⚖️ Nuevo submenú Unidad de Medida
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const UnidadMedidaView()),
-  );
-  } else if (subitem == 'Registrar Compra') { // ✅ Nuevo caso añadido
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const CompraView()),
-  );
-    } else if (subitem == 'Inventario') { // ✅ Nuevo caso añadido
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const InventarioView()),
-  );
-    } else if (subitem == 'Lote') { // ✅ Nuevo caso añadido
-  Navigator.push(
-    context,
-    MaterialPageRoute(builder: (context) => const LoteView()),
-  );
-} else {
-  setState(() {
-    _paginaActual = subitem;
-  });
-}
-
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 32, vertical: 8),
-                                    child: Row(
-                                      children: [
-                                        Icon(Icons.circle,
-                                            size: 10, color: Colors.white54),
-                                        const SizedBox(width: 12),
-                                        Expanded(
-                                          child: Text(subitem,
-                                              style: const TextStyle(
-                                                  color: Colors.white70,
-                                                  fontSize: 16)),
+                                  if (subitem == 'Categoría') {
+                                    Navigator.pushNamed(context, 'categoria');
+                                  } else if (subitem == 'Marca') {
+                                    Navigator.pushNamed(context, 'marca');
+                                  } else if (subitem == 'Clientes') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ClienteView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Proveedor') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProveedorView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Usuarios') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const UsuarioView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Asignar Roles') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const AsignarRolView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Rol') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const RolView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Bodega') {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const BodegaView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Producto') {
+                                    // 🛒 Nuevo submenú Producto
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const ProductoView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Unidad de Medida') {
+                                    // ⚖ Nuevo submenú Unidad de Medida
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const UnidadMedidaView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Registrar Compra') {
+                                    // ✅ Nuevo caso añadido
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const CompraView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Inventario') {
+                                    // ✅ Nuevo caso añadido
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const InventarioLoteView(),
+                                      ),
+                                    );
+                                  } else if (subitem == 'Lote') {
+                                    // ✅ Nuevo caso añadido
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => const LoteView(),
+                                      ),
+                                    );
+                                  } else {
+                                    setState(() {
+                                      _paginaActual = subitem;
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 32,
+                                    vertical: 8,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.circle,
+                                        size: 10,
+                                        color: Colors.white54,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Text(
+                                          subitem,
+                                          style: const TextStyle(
+                                            color: Colors.white70,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                              ))
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
                     crossFadeState: _expansionState[entry.key]!
@@ -456,7 +548,7 @@ if (subitem == 'Categoría') {
         gradient: LinearGradient(
           colors: [
             Colors.white.withOpacity(0.05),
-            Colors.white.withOpacity(0.12)
+            Colors.white.withOpacity(0.12),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -473,16 +565,20 @@ if (subitem == 'Categoría') {
               titulo,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                  color: Colors.white70,
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold),
+                color: Colors.white70,
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
               valor,
               textAlign: TextAlign.center,
               style: const TextStyle(
-                  color: Colors.white, fontSize: 15, fontWeight: FontWeight.w600),
+                color: Colors.white,
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ],
         ),
@@ -497,10 +593,10 @@ class _Burbuja {
   double size;
   Color color;
   double offset;
-  _Burbuja(
-      {required this.topFactor,
-      required this.leftFactor,
-      required this.size,
-      required this.color})
-      : offset = Random().nextDouble();
+  _Burbuja({
+    required this.topFactor,
+    required this.leftFactor,
+    required this.size,
+    required this.color,
+  }) : offset = Random().nextDouble();
 }

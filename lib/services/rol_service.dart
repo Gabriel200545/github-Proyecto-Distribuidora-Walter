@@ -4,7 +4,7 @@ import '../models/rol_model.dart';
 
 class RolService {
   static const String baseUrl =
-      "https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/Roles";
+      "https://webapi20251108112945-d5c0b7fge9c6a8fh.westus-01.azurewebsites.net/api/Roles";
 
   static Future<List<Rol>> getRoles() async {
     final response = await http.get(Uri.parse(baseUrl));
@@ -39,7 +39,7 @@ class RolService {
     return response.statusCode == 200;
   }
 
-    // NUEVOS MÉTODOS PARA ASIGNAR Y QUITAR ROL
+  // NUEVOS MÉTODOS PARA ASIGNAR Y QUITAR ROL
   static Future<bool> asignarRolUsuario(int idUsuario, int idRol) async {
     final response = await http.post(
       Uri.parse('$baseUrl/asignar-rol'),

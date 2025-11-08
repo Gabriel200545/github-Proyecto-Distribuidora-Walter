@@ -4,7 +4,8 @@ import '../models/inventario_model.dart';
 
 class InventarioService {
   // Cambia la URL a tu API real
-  static const String baseUrl = "https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/Inventario";
+  static const String baseUrl =
+      "https://webapi20251108112945-d5c0b7fge9c6a8fh.westus-01.azurewebsites.net/api/Inventario";
 
   // GET all
   static Future<List<Inventario>> getInventarios() async {
@@ -54,7 +55,9 @@ class InventarioService {
   // DELETE
   static Future<bool> deleteInventario(int idProducto, int idBodega) async {
     try {
-      final response = await http.delete(Uri.parse('$baseUrl/$idProducto/$idBodega'));
+      final response = await http.delete(
+        Uri.parse('$baseUrl/$idProducto/$idBodega'),
+      );
       return response.statusCode == 204 || response.statusCode == 200;
     } catch (e) {
       print('Error eliminando inventario: $e');

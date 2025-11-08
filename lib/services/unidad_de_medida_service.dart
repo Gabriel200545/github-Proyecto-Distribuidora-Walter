@@ -4,7 +4,8 @@ import '../models/unidad_medida_model.dart';
 
 class UnidadMedidaService {
   // Cambia la URL a tu API real
-  static const String baseUrl = "https://webapi20251008054007-f5g2fbaqbzfbang0.westus3-01.azurewebsites.net/api/UnidadMedida";
+  static const String baseUrl =
+      "https://webapi20251108112945-d5c0b7fge9c6a8fh.westus-01.azurewebsites.net/api/UnidadMedida";
 
   // GET all
   static Future<List<UnidadMedida>> getUnidades() async {
