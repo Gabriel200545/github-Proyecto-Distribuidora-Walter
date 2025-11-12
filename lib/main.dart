@@ -11,11 +11,12 @@ import 'package:distribuidora_app_new/views/rol_view.dart';
 import 'package:distribuidora_app_new/views/unidad_de_medida_view.dart';
 import 'package:distribuidora_app_new/views/usuario_view.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // ✅ IMPORTANTE
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'views/login_view.dart';
 import 'views/home_view.dart';
 import 'views/marca_view.dart';
 import 'views/proveedor_view.dart';
+import 'views/reportes_view.dart'; // <-- Importamos Reportes
 
 void main() {
   runApp(const MyApp());
@@ -42,12 +43,7 @@ class MyApp extends StatelessWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale(
-          'es',
-          'ES',
-        ), // ✅ Esto hace que el DatePicker y otros widgets estén en español
-      ],
+      supportedLocales: const [Locale('es', 'ES')],
       home: const LoginPantallaPremiumAnimada(),
       routes: {
         'home': (_) => const HomeViewPremium(),
@@ -64,6 +60,7 @@ class MyApp extends StatelessWidget {
         'compra': (_) => const CompraView(),
         'lote': (_) => const LoteView(),
         'inventario': (_) => const InventarioLoteView(),
+        'reportes': (_) => const ReportesView(), // <-- Ruta para Reportes
       },
     );
   }

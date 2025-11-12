@@ -11,7 +11,8 @@ import 'cliente_view.dart';
 import 'proveedor_view.dart';
 import 'usuario_view.dart';
 import 'rol_view.dart';
-import 'bodega_view.dart'; // <-- Importamos la vista de Bodega
+import 'bodega_view.dart';
+import 'reportes_view.dart'; // <-- Importamos Reportes
 
 class HomeViewPremium extends StatefulWidget {
   const HomeViewPremium({super.key});
@@ -22,7 +23,7 @@ class HomeViewPremium extends StatefulWidget {
 
 class _HomeViewPremiumState extends State<HomeViewPremium>
     with SingleTickerProviderStateMixin {
-  String _paginaActual = 'Reportes';
+  String _paginaActual = '';
   String _menuSeleccionado = '';
   late AnimationController _controller;
 
@@ -32,12 +33,8 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
     'Ventas': ['Clientes', 'Registrar Venta', 'Consultar Venta'],
     'Inventario': ['Lote', 'Inventario'],
     'Devolucion': ['Devolucion Compra', 'Devolucion Venta'],
-    'Configuracion': [
-      'Usuarios',
-      'Asignar Roles',
-      'Rol',
-      'Bodega',
-    ], // <-- Ya está
+    'Configuracion': ['Usuarios', 'Asignar Roles', 'Rol', 'Bodega'],
+    'Reportes': ['Diagramas'], // <-- Módulo agregado
   };
 
   final Map<String, IconData> menuIcons = {
@@ -47,6 +44,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
     'Inventario': Icons.inventory_2_outlined,
     'Devolucion': Icons.assignment_return_outlined,
     'Configuracion': Icons.settings_outlined,
+    'Reportes': Icons.pie_chart_outline, // <-- Icono para Reportes
   };
 
   final List<_Burbuja> _burbujas = List.generate(
@@ -165,72 +163,14 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
               ),
               Expanded(
                 child: Center(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(bottom: 24),
-                          child: Text(
-                            'Reportes',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.w600,
-                              shadows: [
-                                Shadow(
-                                  color: Colors.black45,
-                                  offset: Offset(1, 1),
-                                  blurRadius: 4,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Wrap(
-                          spacing: 16,
-                          runSpacing: 16,
-                          alignment: WrapAlignment.center,
-                          children: [
-                            _tarjetaReporteMejorada(
-                              'Ventas por Día',
-                              '120 ventas',
-                              Icons.show_chart,
-                            ),
-                            _tarjetaReporteMejorada(
-                              'Inventario Crítico',
-                              'Harina: 5 uds',
-                              Icons.warning,
-                            ),
-                            _tarjetaReporteMejorada(
-                              'Ingresos Mensuales',
-                              '\$12,500',
-                              Icons.monetization_on,
-                            ),
-                            _tarjetaReporteMejorada(
-                              'Gastos Mensuales',
-                              '\$5,200',
-                              Icons.money_off,
-                            ),
-                            _tarjetaReporteMejorada(
-                              'Clientes Activos',
-                              '85',
-                              Icons.people,
-                            ),
-                            _tarjetaReporteMejorada(
-                              'Productos Disponibles',
-                              '320',
-                              Icons.shopping_cart,
-                            ),
-                            _tarjetaReporteMejorada(
-                              'Devoluciones',
-                              '3',
-                              Icons.assignment_return,
-                            ),
-                          ],
-                        ),
-                      ],
+                  child: Text(
+                    _paginaActual.isEmpty
+                        ? 'Seleccione una opción del menú'
+                        : _paginaActual,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
@@ -362,106 +302,124 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                 splashColor: Colors.white24,
                                 highlightColor: Colors.white10,
                                 onTap: () {
-                                  // Navegación
-                                  if (subitem == 'Categoría') {
-                                    Navigator.pushNamed(context, 'categoria');
-                                  } else if (subitem == 'Marca') {
-                                    Navigator.pushNamed(context, 'marca');
-                                  } else if (subitem == 'Clientes') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ClienteView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Proveedor') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProveedorView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Usuarios') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const UsuarioView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Asignar Roles') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const AsignarRolView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Rol') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const RolView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Bodega') {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const BodegaView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Producto') {
-                                    // 🛒 Nuevo submenú Producto
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const ProductoView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Unidad de Medida') {
-                                    // ⚖ Nuevo submenú Unidad de Medida
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const UnidadMedidaView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Registrar Compra') {
-                                    // ✅ Nuevo caso añadido
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const CompraView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Inventario') {
-                                    // ✅ Nuevo caso añadido
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            const InventarioLoteView(),
-                                      ),
-                                    );
-                                  } else if (subitem == 'Lote') {
-                                    // ✅ Nuevo caso añadido
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => const LoteView(),
-                                      ),
-                                    );
-                                  } else {
-                                    setState(() {
-                                      _paginaActual = subitem;
-                                    });
+                                  switch (subitem) {
+                                    case 'Categoría':
+                                      Navigator.pushNamed(context, 'categoria');
+                                      break;
+                                    case 'Marca':
+                                      Navigator.pushNamed(context, 'marca');
+                                      break;
+                                    case 'Clientes':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ClienteView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Proveedor':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ProveedorView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Usuarios':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const UsuarioView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Asignar Roles':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const AsignarRolView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Rol':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => const RolView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Bodega':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const BodegaView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Producto':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ProductoView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Unidad de Medida':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const UnidadMedidaView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Registrar Compra':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const CompraView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Inventario':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const InventarioLoteView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Lote':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LoteView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Diagramas': // <-- Reportes
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              const ReportesView(),
+                                        ),
+                                      );
+                                      break;
+                                    default:
+                                      setState(() {
+                                        _paginaActual = subitem;
+                                      });
                                   }
                                 },
                                 child: Container(
@@ -526,62 +484,6 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
             offset: const Offset(3, 3),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _tarjetaReporteMejorada(String titulo, String valor, IconData icono) {
-    return Container(
-      width: 160,
-      height: 110,
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.08),
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.3),
-            blurRadius: 8,
-            offset: const Offset(2, 2),
-          ),
-        ],
-        border: Border.all(color: Colors.white24, width: 1),
-        gradient: LinearGradient(
-          colors: [
-            Colors.white.withOpacity(0.05),
-            Colors.white.withOpacity(0.12),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icono, color: Colors.white70, size: 28),
-            const SizedBox(height: 6),
-            Text(
-              titulo,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 13,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              valor,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }
