@@ -1,13 +1,13 @@
 // views/venta_view.dart
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:collection/collection.dart';
 
 import '../models/venta_model.dart';
 import '../models/producto_model.dart';
 import '../models/unidad_medida_model.dart';
 import '../models/cliente_model.dart';
 import '../models/conversion_model.dart';
-import 'package:collection/collection.dart';
 
 import '../services/venta_service.dart';
 import '../services/producto_service.dart';
@@ -42,7 +42,7 @@ class _VentaViewState extends State<VentaView> {
   List<DetalleVentaRequest> detalles = [];
 
   bool loading = true;
-  final factorVenta = 1.15; // 15% margen igual que en tu web
+  final factorVenta = 1.15; // 15% margen
 
   @override
   void initState() {
@@ -68,7 +68,6 @@ class _VentaViewState extends State<VentaView> {
     }
   }
 
-  // --- LÓGICA DE CONVERSIONES (como la web) ---
   double obtenerFactorConversion(int unidadDesde, int unidadHasta) {
     if (unidadDesde == unidadHasta) return 1.0;
 
@@ -119,31 +118,17 @@ class _VentaViewState extends State<VentaView> {
     setState(() {});
   }
 
-  // Obtener último precio de compra desde compras
   Future<double?> obtenerUltimoPrecioCompraDesdeCompras(int idProducto) async {
     try {
-      // 🔹 Obtenemos todas las compras con sus detalles
       final compras = await ConsultarCompraService.obtenerCompras();
-
-      // 🔹 Recorremos desde la última hacia la primera (para obtener la más reciente)
       for (int i = compras.length - 1; i >= 0; i--) {
-        final compra = compras[i];
-
-        // 🔹 Buscamos el detalle que coincida con el producto
-        final detalle = compra.detalles.firstWhereOrNull(
+        final detalle = compras[i].detalles.firstWhereOrNull(
           (d) => d.idProducto == idProducto,
         );
-
-        // 🔹 Si encontramos detalle válido, retornamos su precio unitario
-        if (detalle != null) {
-          return detalle.precioUnitario;
-        }
+        if (detalle != null) return detalle.precioUnitario;
       }
-
-      // 🔹 Si no se encuentra precio, devolvemos null
       return null;
     } catch (e) {
-      // ⚠️ Manejo de errores
       if (mounted) {
         ScaffoldMessenger.of(
           context,
@@ -185,7 +170,6 @@ class _VentaViewState extends State<VentaView> {
       productoSeleccionado!.idUnidadMedida,
       unidadSeleccionada!.idUnidad,
     );
-
     final precioUnitarioConvertido = (precioCompra / factorConv) * factorVenta;
 
     final detalle = DetalleVentaRequest(
@@ -210,10 +194,7 @@ class _VentaViewState extends State<VentaView> {
 
   double get subtotalConMargen {
     double subtotal = 0;
-    for (final d in detalles) {
-      final precio = d.precioUnitario ?? 0;
-      subtotal += precio * d.cantidad;
-    }
+    for (final d in detalles) subtotal += (d.precioUnitario ?? 0) * d.cantidad;
     return subtotal;
   }
 
@@ -244,9 +225,7 @@ class _VentaViewState extends State<VentaView> {
           const SnackBar(content: Text("✅ Venta registrada correctamente.")),
         );
       }
-      setState(() {
-        detalles.clear();
-      });
+      setState(() => detalles.clear());
     } else {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -261,24 +240,27 @@ class _VentaViewState extends State<VentaView> {
     final formatter = NumberFormat.currency(symbol: 'C\$ ', decimalDigits: 2);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF4F2FF),
+      backgroundColor: Colors.black,
       appBar: AppBar(
         title: const Text(
           "Registrar Venta",
           style: TextStyle(fontWeight: FontWeight.w600),
         ),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: const Color(0xFF6A1B9A),
         centerTitle: true,
         elevation: 3,
       ),
       body: SafeArea(
         child: loading
-            ? const Center(child: CircularProgressIndicator())
+            ? const Center(
+                child: CircularProgressIndicator(color: Colors.white),
+              )
             : Column(
                 children: [
                   Expanded(
                     child: RefreshIndicator(
                       onRefresh: cargarDatos,
+                      color: Colors.deepPurple,
                       child: SingleChildScrollView(
                         physics: const AlwaysScrollableScrollPhysics(),
                         padding: const EdgeInsets.all(16),
@@ -288,15 +270,26 @@ class _VentaViewState extends State<VentaView> {
                               title: "Cliente",
                               child: DropdownButtonFormField<Cliente>(
                                 value: clienteSeleccionado,
-                                decoration: const InputDecoration(
+                                decoration: InputDecoration(
                                   labelText: "Selecciona cliente",
-                                  border: OutlineInputBorder(),
+                                  border: const OutlineInputBorder(),
+                                  filled: true,
+                                  fillColor: Colors.grey[900],
+                                  labelStyle: const TextStyle(
+                                    color: Colors.white70,
+                                  ),
                                 ),
+                                dropdownColor: Colors.grey[900],
                                 items: clientes
                                     .map(
                                       (c) => DropdownMenuItem(
                                         value: c,
-                                        child: Text(c.nombre),
+                                        child: Text(
+                                          c.nombre,
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ),
                                       ),
                                     )
                                     .toList(),
@@ -312,15 +305,26 @@ class _VentaViewState extends State<VentaView> {
                                 children: [
                                   DropdownButtonFormField<Producto>(
                                     value: productoSeleccionado,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       labelText: "Producto",
-                                      border: OutlineInputBorder(),
+                                      border: const OutlineInputBorder(),
+                                      filled: true,
+                                      fillColor: Colors.grey[900],
+                                      labelStyle: const TextStyle(
+                                        color: Colors.white70,
+                                      ),
                                     ),
+                                    dropdownColor: Colors.grey[900],
                                     items: productos
                                         .map(
                                           (p) => DropdownMenuItem(
                                             value: p,
-                                            child: Text(p.nombre),
+                                            child: Text(
+                                              p.nombre,
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                              ),
+                                            ),
                                           ),
                                         )
                                         .toList(),
@@ -334,16 +338,25 @@ class _VentaViewState extends State<VentaView> {
                                   const SizedBox(height: 12),
                                   DropdownButtonFormField<UnidadMedida>(
                                     value: unidadSeleccionada,
-                                    decoration: const InputDecoration(
+                                    decoration: InputDecoration(
                                       labelText: "Unidad de medida",
-                                      border: OutlineInputBorder(),
+                                      border: const OutlineInputBorder(),
+                                      filled: true,
+                                      fillColor: Colors.grey[900],
+                                      labelStyle: const TextStyle(
+                                        color: Colors.white70,
+                                      ),
                                     ),
+                                    dropdownColor: Colors.grey[900],
                                     items: unidadesFiltradas
                                         .map(
                                           (u) => DropdownMenuItem(
                                             value: u,
                                             child: Text(
                                               "${u.nombre} (${u.abreviacion})",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
                                         )
@@ -352,21 +365,19 @@ class _VentaViewState extends State<VentaView> {
                                         setState(() => unidadSeleccionada = u),
                                   ),
                                   const SizedBox(height: 12),
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextField(
-                                          controller: _cantidadCtrl,
-                                          decoration: const InputDecoration(
-                                            labelText: "Cantidad",
-                                            border: OutlineInputBorder(),
-                                          ),
-                                          keyboardType: TextInputType.number,
-                                        ),
+                                  TextField(
+                                    controller: _cantidadCtrl,
+                                    decoration: InputDecoration(
+                                      labelText: "Cantidad",
+                                      border: const OutlineInputBorder(),
+                                      filled: true,
+                                      fillColor: Colors.grey[900],
+                                      labelStyle: const TextStyle(
+                                        color: Colors.white70,
                                       ),
-                                      const SizedBox(width: 8),
-                                      Expanded(child: Container()),
-                                    ],
+                                    ),
+                                    keyboardType: TextInputType.number,
+                                    style: const TextStyle(color: Colors.white),
                                   ),
                                   const SizedBox(height: 16),
                                   Align(
@@ -386,7 +397,7 @@ class _VentaViewState extends State<VentaView> {
                                         ),
                                         shape: RoundedRectangleBorder(
                                           borderRadius: BorderRadius.circular(
-                                            12,
+                                            20,
                                           ),
                                         ),
                                         textStyle: const TextStyle(
@@ -413,26 +424,88 @@ class _VentaViewState extends State<VentaView> {
                                         child: DataTable(
                                           headingRowColor:
                                               MaterialStateProperty.all(
-                                                Colors.deepPurple.shade50,
+                                                Colors.deepPurple.shade900,
                                               ),
-                                          columnSpacing: 16,
                                           headingTextStyle: const TextStyle(
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.deepPurple,
+                                            color: Colors.white,
                                           ),
-                                          border: TableBorder.symmetric(
-                                            inside: BorderSide(
+                                          columnSpacing: 16,
+                                          border: TableBorder(
+                                            top: BorderSide(
+                                              color: Colors.deepPurple,
+                                              width: 2,
+                                            ),
+                                            bottom: BorderSide(
+                                              color: Colors.deepPurple,
+                                              width: 2,
+                                            ),
+                                            left: BorderSide(
+                                              color: Colors.deepPurple,
+                                              width: 2,
+                                            ),
+                                            right: BorderSide(
+                                              color: Colors.deepPurple,
+                                              width: 2,
+                                            ),
+                                            horizontalInside: BorderSide(
                                               color: Colors.deepPurple
-                                                  .withOpacity(0.1),
+                                                  .withOpacity(0.2),
+                                            ),
+                                            verticalInside: BorderSide(
+                                              color: Colors.deepPurple
+                                                  .withOpacity(0.2),
                                             ),
                                           ),
                                           columns: const [
-                                            DataColumn(label: Text("Producto")),
-                                            DataColumn(label: Text("Unidad")),
-                                            DataColumn(label: Text("Cant.")),
-                                            DataColumn(label: Text("Precio")),
-                                            DataColumn(label: Text("Subtotal")),
-                                            DataColumn(label: Text("Eliminar")),
+                                            DataColumn(
+                                              label: Text(
+                                                "Producto",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                "Unidad",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                "Cant.",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                "Precio",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                "Subtotal",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            DataColumn(
+                                              label: Text(
+                                                "Eliminar",
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
                                           ],
                                           rows: List.generate(detalles.length, (
                                             i,
@@ -463,7 +536,6 @@ class _VentaViewState extends State<VentaView> {
                                                 tipoUnidad: "-",
                                               ),
                                             );
-
                                             final precio =
                                                 d.precioUnitario ?? 0.0;
                                             final subtotal =
@@ -471,14 +543,29 @@ class _VentaViewState extends State<VentaView> {
 
                                             return DataRow(
                                               cells: [
-                                                DataCell(Text(producto.nombre)),
                                                 DataCell(
-                                                  Text(unidad.abreviacion),
+                                                  Text(
+                                                    producto.nombre,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                ),
+                                                DataCell(
+                                                  Text(
+                                                    unidad.abreviacion,
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
                                                 ),
                                                 DataCell(
                                                   Text(
                                                     d.cantidad.toStringAsFixed(
                                                       2,
+                                                    ),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
                                                     ),
                                                   ),
                                                 ),
@@ -489,11 +576,17 @@ class _VentaViewState extends State<VentaView> {
                                                             precio,
                                                           )
                                                         : "—",
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
                                                 ),
                                                 DataCell(
                                                   Text(
                                                     formatter.format(subtotal),
+                                                    style: const TextStyle(
+                                                      color: Colors.white,
+                                                    ),
                                                   ),
                                                 ),
                                                 DataCell(
@@ -525,7 +618,7 @@ class _VentaViewState extends State<VentaView> {
                   Container(
                     width: double.infinity,
                     decoration: const BoxDecoration(
-                      color: Colors.deepPurple,
+                      color: Color(0xFF6A1B9A),
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(20),
                         topRight: Radius.circular(20),
@@ -568,7 +661,7 @@ class _VentaViewState extends State<VentaView> {
                               fontWeight: FontWeight.w600,
                             ),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
                         ),
@@ -583,6 +676,7 @@ class _VentaViewState extends State<VentaView> {
 
   Widget _buildCard({required String title, required Widget child}) {
     return Card(
+      color: Colors.grey[850],
       elevation: 6,
       shadowColor: Colors.deepPurple.withOpacity(0.2),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -596,7 +690,7 @@ class _VentaViewState extends State<VentaView> {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 17,
-                color: Colors.deepPurple,
+                color: Colors.white,
               ),
             ),
             const SizedBox(height: 12),

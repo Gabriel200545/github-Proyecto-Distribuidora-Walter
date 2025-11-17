@@ -76,6 +76,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
       vsync: this,
       duration: const Duration(seconds: 20),
     )..repeat();
+
     for (var key in menu.keys) {
       _expansionState[key] = false;
     }
@@ -144,15 +145,13 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                               color: Colors.white,
                               size: 34,
                             ),
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
+                            onPressed: () => Scaffold.of(context).openDrawer(),
                           );
                         },
                       ),
                       const SizedBox(width: 16),
-                      Expanded(
-                        child: const Text(
+                      const Expanded(
+                        child: Text(
                           'Distribuidora Walter',
                           style: TextStyle(
                             color: Colors.white,
@@ -165,19 +164,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                   ),
                 ),
               ),
-              const Expanded(
-                child: Center(
-                  child: Text(
-                    '',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              ),
+              const Expanded(child: SizedBox()),
             ],
           ),
         ],
@@ -201,22 +188,22 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
             topRight: Radius.circular(24),
             bottomRight: Radius.circular(24),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.25),
-              blurRadius: 8,
-              offset: const Offset(3, 0),
-            ),
-          ],
         ),
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8),
           children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: const Icon(Icons.close, color: Colors.white, size: 32),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ),
             const Center(
               child: Padding(
                 padding: EdgeInsets.only(bottom: 24),
                 child: Text(
-                  'Menu',
+                  'Menú',
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 22,
@@ -227,6 +214,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
             ),
             ...menu.entries.map((entry) {
               final bool seleccionado = _menuSeleccionado == entry.key;
+
               return Column(
                 children: [
                   GestureDetector(
@@ -246,29 +234,21 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                       duration: const Duration(milliseconds: 300),
                       margin: const EdgeInsets.symmetric(vertical: 4),
                       padding: const EdgeInsets.symmetric(
-                        vertical: 10,
-                        horizontal: 12,
+                        vertical: 12,
+                        horizontal: 16,
                       ),
                       decoration: BoxDecoration(
                         color: seleccionado
                             ? Colors.white.withOpacity(0.9)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
-                        boxShadow: seleccionado
-                            ? [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.15),
-                                  blurRadius: 6,
-                                  offset: const Offset(2, 2),
-                                ),
-                              ]
-                            : [],
                       ),
                       child: Row(
                         children: [
                           Icon(
                             menuIcons[entry.key],
                             color: seleccionado ? Colors.black : Colors.white,
+                            size: 26,
                           ),
                           const SizedBox(width: 12),
                           Expanded(
@@ -299,177 +279,27 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                       children: entry.value
                           .map(
                             (subitem) => Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              padding: const EdgeInsets.symmetric(vertical: 4),
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(8),
                                 splashColor: Colors.white24,
                                 highlightColor: Colors.white10,
                                 onTap: () {
-                                  Navigator.of(context).pop(); // Cerrar Drawer
-
-                                  switch (subitem) {
-                                    case 'Categoría':
-                                      Navigator.pushNamed(context, 'categoria');
-                                      break;
-                                    case 'Marca':
-                                      Navigator.pushNamed(context, 'marca');
-                                      break;
-                                    case 'Clientes':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const ClienteView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Proveedor':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const ProveedorView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Usuarios':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const UsuarioView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Asignar Roles':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const AsignarRolView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Rol':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const RolView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Bodega':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const BodegaView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Producto':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const ProductoView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Unidad de Medida':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const UnidadMedidaView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Registrar Compra':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const CompraView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Consultar Compra':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const ConsultarCompraView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Registrar Venta':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const VentaView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Consultar Venta':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const ConsultarVentaView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Lote':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const LoteView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Inventario':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const InventarioView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Devolucion Compra':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const DevolucionCompraView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Devolucion Venta':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) =>
-                                              const DevolucionVentaView(),
-                                        ),
-                                      );
-                                      break;
-                                    case 'Diagramas':
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => const ReportesView(),
-                                        ),
-                                      );
-                                      break;
-                                  }
+                                  Navigator.of(context).pop();
+                                  _navegarSubmenu(subitem);
                                 },
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 32,
-                                    vertical: 8,
+                                    horizontal: 40,
+                                    vertical: 10,
                                   ),
+                                  alignment: Alignment.centerLeft,
                                   child: Row(
                                     children: [
                                       const Icon(
                                         Icons.circle,
                                         size: 10,
-                                        color: Colors.white54,
+                                        color: Colors.white70,
                                       ),
                                       const SizedBox(width: 12),
                                       Expanded(
@@ -497,10 +327,182 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                 ],
               );
             }),
+            const SizedBox(height: 20),
+            // 🔴 CERRAR SESIÓN
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(12),
+                onTap: () async {
+                  bool? confirmar = await showDialog<bool>(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: const Text('Confirmar'),
+                        content: const Text('¿Desea cerrar sesión?'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(false),
+                            child: const Text('No'),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(true),
+                            child: const Text('Sí'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (confirmar == true) {
+                    Navigator.pushReplacementNamed(
+                      context,
+                      '/',
+                    ); // Volver al login
+                  }
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 14,
+                    horizontal: 16,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.redAccent,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.logout, color: Colors.white),
+                      SizedBox(width: 12),
+                      Text(
+                        'Cerrar Sesión',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  void _navegarSubmenu(String subitem) {
+    switch (subitem) {
+      case 'Categoría':
+        Navigator.pushNamed(context, 'categoria');
+        break;
+      case 'Marca':
+        Navigator.pushNamed(context, 'marca');
+        break;
+      case 'Clientes':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ClienteView()),
+        );
+        break;
+      case 'Proveedor':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProveedorView()),
+        );
+        break;
+      case 'Usuarios':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const UsuarioView()),
+        );
+        break;
+      case 'Asignar Roles':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const AsignarRolView()),
+        );
+        break;
+      case 'Rol':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const RolView()),
+        );
+        break;
+      case 'Bodega':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const BodegaView()),
+        );
+        break;
+      case 'Producto':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ProductoView()),
+        );
+        break;
+      case 'Unidad de Medida':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const UnidadMedidaView()),
+        );
+        break;
+      case 'Registrar Compra':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const CompraView()),
+        );
+        break;
+      case 'Consultar Compra':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ConsultarCompraView()),
+        );
+        break;
+      case 'Registrar Venta':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const VentaView()),
+        );
+        break;
+      case 'Consultar Venta':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ConsultarVentaView()),
+        );
+        break;
+      case 'Lote':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const LoteView()),
+        );
+        break;
+      case 'Inventario':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const InventarioView()),
+        );
+        break;
+      case 'Devolucion Compra':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DevolucionCompraView()),
+        );
+        break;
+      case 'Devolucion Venta':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const DevolucionVentaView()),
+        );
+        break;
+      case 'Diagramas':
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const ReportesView()),
+        );
+        break;
+    }
   }
 
   Widget _burbuja3D(double size, Color color) {
@@ -532,6 +534,7 @@ class _Burbuja {
   double size;
   Color color;
   double offset;
+
   _Burbuja({
     required this.topFactor,
     required this.leftFactor,

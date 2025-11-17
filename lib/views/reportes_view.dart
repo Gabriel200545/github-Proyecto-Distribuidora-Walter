@@ -671,7 +671,11 @@ class _ReportesViewState extends State<ReportesView> {
                   ),
                   if (value != null)
                     IconButton(
-                      icon: const Icon(Icons.clear, size: 18, color: Colors.white70),
+                      icon: const Icon(
+                        Icons.clear,
+                        size: 18,
+                        color: Colors.white70,
+                      ),
                       onPressed: onClear,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -720,12 +724,17 @@ class _ReportesViewState extends State<ReportesView> {
                 items: [
                   const DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('Todos', style: TextStyle(color: Colors.white54)),
+                    child: Text(
+                      'Todos',
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   ),
-                  ...years.map((year) => DropdownMenuItem<int?>(
-                    value: year,
-                    child: Text(year.toString()),
-                  )),
+                  ...years.map(
+                    (year) => DropdownMenuItem<int?>(
+                      value: year,
+                      child: Text(year.toString()),
+                    ),
+                  ),
                 ],
                 onChanged: (val) {
                   if (val == null) {
@@ -734,7 +743,10 @@ class _ReportesViewState extends State<ReportesView> {
                     onChanged(val);
                   }
                 },
-                hint: const Text('Seleccionar', style: TextStyle(color: Colors.white54)),
+                hint: const Text(
+                  'Seleccionar',
+                  style: TextStyle(color: Colors.white54),
+                ),
               ),
             ),
           ),
@@ -790,12 +802,17 @@ class _ReportesViewState extends State<ReportesView> {
                 items: [
                   const DropdownMenuItem<int?>(
                     value: null,
-                    child: Text('Todos', style: TextStyle(color: Colors.white54)),
+                    child: Text(
+                      'Todos',
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   ),
-                  ...months.map((m) => DropdownMenuItem<int?>(
-                    value: m['value'] as int,
-                    child: Text(m['name'] as String),
-                  )),
+                  ...months.map(
+                    (m) => DropdownMenuItem<int?>(
+                      value: m['value'] as int,
+                      child: Text(m['name'] as String),
+                    ),
+                  ),
                 ],
                 onChanged: (val) {
                   if (val == null) {
@@ -804,7 +821,10 @@ class _ReportesViewState extends State<ReportesView> {
                     onChanged(val);
                   }
                 },
-                hint: const Text('Seleccionar', style: TextStyle(color: Colors.white54)),
+                hint: const Text(
+                  'Seleccionar',
+                  style: TextStyle(color: Colors.white54),
+                ),
               ),
             ),
           ),
@@ -833,7 +853,10 @@ class _ReportesViewState extends State<ReportesView> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF2A2A2A),
                     borderRadius: BorderRadius.circular(8),
@@ -865,12 +888,17 @@ class _ReportesViewState extends State<ReportesView> {
                     items: [
                       const DropdownMenuItem<int?>(
                         value: null,
-                        child: Text('Todos', style: TextStyle(color: Colors.white54)),
+                        child: Text(
+                          'Todos',
+                          style: TextStyle(color: Colors.white54),
+                        ),
                       ),
-                      ...proveedores.map((p) => DropdownMenuItem<int?>(
-                        value: p.idProveedor,
-                        child: Text(p.nombre),
-                      )),
+                      ...proveedores.map(
+                        (p) => DropdownMenuItem<int?>(
+                          value: p.idProveedor,
+                          child: Text(p.nombre),
+                        ),
+                      ),
                     ],
                     onChanged: (val) {
                       if (val == null) {
@@ -879,7 +907,10 @@ class _ReportesViewState extends State<ReportesView> {
                         onChanged(val);
                       }
                     },
-                    hint: const Text('Seleccionar', style: TextStyle(color: Colors.white54)),
+                    hint: const Text(
+                      'Seleccionar',
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   ),
                 ),
               );
@@ -910,7 +941,10 @@ class _ReportesViewState extends State<ReportesView> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF2A2A2A),
                     borderRadius: BorderRadius.circular(8),
@@ -942,12 +976,17 @@ class _ReportesViewState extends State<ReportesView> {
                     items: [
                       const DropdownMenuItem<int?>(
                         value: null,
-                        child: Text('Todos', style: TextStyle(color: Colors.white54)),
+                        child: Text(
+                          'Todos',
+                          style: TextStyle(color: Colors.white54),
+                        ),
                       ),
-                      ...categorias.map((c) => DropdownMenuItem<int?>(
-                        value: c.id,
-                        child: Text(c.nombre),
-                      )),
+                      ...categorias.map(
+                        (c) => DropdownMenuItem<int?>(
+                          value: c.id,
+                          child: Text(c.nombre),
+                        ),
+                      ),
                     ],
                     onChanged: (val) {
                       if (val == null) {
@@ -956,7 +995,10 @@ class _ReportesViewState extends State<ReportesView> {
                         onChanged(val);
                       }
                     },
-                    hint: const Text('Seleccionar', style: TextStyle(color: Colors.white54)),
+                    hint: const Text(
+                      'Seleccionar',
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   ),
                 ),
               );
@@ -987,7 +1029,10 @@ class _ReportesViewState extends State<ReportesView> {
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xFF2A2A2A),
                     borderRadius: BorderRadius.circular(8),
@@ -1019,12 +1064,17 @@ class _ReportesViewState extends State<ReportesView> {
                     items: [
                       const DropdownMenuItem<int?>(
                         value: null,
-                        child: Text('Todos', style: TextStyle(color: Colors.white54)),
+                        child: Text(
+                          'Todos',
+                          style: TextStyle(color: Colors.white54),
+                        ),
                       ),
-                      ...marcas.map((m) => DropdownMenuItem<int?>(
-                        value: m.idMarca,
-                        child: Text(m.nombre),
-                      )),
+                      ...marcas.map(
+                        (m) => DropdownMenuItem<int?>(
+                          value: m.idMarca,
+                          child: Text(m.nombre),
+                        ),
+                      ),
                     ],
                     onChanged: (val) {
                       if (val == null) {
@@ -1033,7 +1083,10 @@ class _ReportesViewState extends State<ReportesView> {
                         onChanged(val);
                       }
                     },
-                    hint: const Text('Seleccionar', style: TextStyle(color: Colors.white54)),
+                    hint: const Text(
+                      'Seleccionar',
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   ),
                 ),
               );
@@ -1075,7 +1128,10 @@ class _ReportesViewState extends State<ReportesView> {
                 items: const [
                   DropdownMenuItem<String?>(
                     value: null,
-                    child: Text('Todos', style: TextStyle(color: Colors.white54)),
+                    child: Text(
+                      'Todos',
+                      style: TextStyle(color: Colors.white54),
+                    ),
                   ),
                   DropdownMenuItem<String?>(
                     value: 'mensual',
@@ -1093,7 +1149,10 @@ class _ReportesViewState extends State<ReportesView> {
                     onChanged(val);
                   }
                 },
-                hint: const Text('Seleccionar', style: TextStyle(color: Colors.white54)),
+                hint: const Text(
+                  'Seleccionar',
+                  style: TextStyle(color: Colors.white54),
+                ),
               ),
             ),
           ),
@@ -1144,7 +1203,11 @@ class _ReportesViewState extends State<ReportesView> {
               hintStyle: const TextStyle(color: Colors.white54),
               suffixIcon: value != null
                   ? IconButton(
-                      icon: const Icon(Icons.clear, size: 18, color: Colors.white70),
+                      icon: const Icon(
+                        Icons.clear,
+                        size: 18,
+                        color: Colors.white70,
+                      ),
                       onPressed: () {
                         controller.clear();
                         onClear();
@@ -1299,12 +1362,12 @@ class _ReportesViewState extends State<ReportesView> {
             final minValue = data
                 .map((e) => e.porcentaje)
                 .reduce((a, b) => a < b ? a : b);
-            
+
             // Calcular rango más inteligente
             final range = maxValue - minValue;
             double maxY;
             double minY;
-            
+
             if (range == 0) {
               // Si todos los valores son iguales (un solo punto o mismo valor)
               final center = maxValue;
@@ -1315,7 +1378,7 @@ class _ReportesViewState extends State<ReportesView> {
               final margin = range * 0.15;
               maxY = maxValue + margin;
               minY = minValue - margin;
-              
+
               // Asegurar que el rango mínimo sea visible
               if (maxY - minY < 20) {
                 final center = (maxValue + minValue) / 2;
@@ -1323,7 +1386,7 @@ class _ReportesViewState extends State<ReportesView> {
                 minY = center - 20.0;
               }
             }
-            
+
             // Redondear a múltiplos de 10 para mejor visualización
             maxY = (maxY / 10).ceil() * 10.0;
             minY = (minY / 10).floor() * 10.0;

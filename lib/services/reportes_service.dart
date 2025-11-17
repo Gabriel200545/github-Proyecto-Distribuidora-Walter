@@ -14,7 +14,7 @@ class ReportesService {
   }) async {
     final uri = Uri.parse('$baseUrl/VentasDw/Totales');
     final queryParams = <String, String>{};
-    
+
     if (fechaInicio != null) {
       queryParams['fechaInicio'] = fechaInicio.toIso8601String().split('T')[0];
     }
@@ -28,8 +28,8 @@ class ReportesService {
       queryParams['mes'] = mes.toString();
     }
 
-    final finalUri = queryParams.isEmpty 
-        ? uri 
+    final finalUri = queryParams.isEmpty
+        ? uri
         : uri.replace(queryParameters: queryParams);
 
     final res = await http.get(finalUri);
@@ -50,7 +50,7 @@ class ReportesService {
   }) async {
     final uri = Uri.parse('$baseUrl/FactCompraDw/GastoTotal');
     final queryParams = <String, String>{};
-    
+
     if (fechaInicio != null) {
       queryParams['fechaInicio'] = fechaInicio.toIso8601String().split('T')[0];
     }
@@ -67,8 +67,8 @@ class ReportesService {
       queryParams['proveedorId'] = proveedorId.toString();
     }
 
-    final finalUri = queryParams.isEmpty 
-        ? uri 
+    final finalUri = queryParams.isEmpty
+        ? uri
         : uri.replace(queryParameters: queryParams);
 
     final res = await http.get(finalUri);
@@ -88,7 +88,7 @@ class ReportesService {
   }) async {
     final uri = Uri.parse('$baseUrl/TimeDw/CrecimientoMensual');
     final queryParams = <String, String>{};
-    
+
     if (anio != null) {
       queryParams['anio'] = anio.toString();
     }
@@ -102,8 +102,8 @@ class ReportesService {
       queryParams['periodo'] = periodo;
     }
 
-    final finalUri = queryParams.isEmpty 
-        ? uri 
+    final finalUri = queryParams.isEmpty
+        ? uri
         : uri.replace(queryParameters: queryParams);
 
     final res = await http.get(finalUri);
@@ -124,7 +124,7 @@ class ReportesService {
   }) async {
     final uri = Uri.parse('$baseUrl/ProductDw/UnidadesVendidas');
     final queryParams = <String, String>{};
-    
+
     if (fechaInicio != null) {
       queryParams['fechaInicio'] = fechaInicio.toIso8601String().split('T')[0];
     }
@@ -141,8 +141,8 @@ class ReportesService {
       queryParams['top'] = top.toString();
     }
 
-    final finalUri = queryParams.isEmpty 
-        ? uri 
+    final finalUri = queryParams.isEmpty
+        ? uri
         : uri.replace(queryParameters: queryParams);
 
     final res = await http.get(finalUri);
@@ -163,7 +163,7 @@ class ReportesService {
   }) async {
     final uri = Uri.parse('$baseUrl/ProductDw/CostoPromedio');
     final queryParams = <String, String>{};
-    
+
     if (categoriaId != null) {
       queryParams['categoriaId'] = categoriaId.toString();
     }
@@ -180,8 +180,8 @@ class ReportesService {
       queryParams['top'] = top.toString();
     }
 
-    final finalUri = queryParams.isEmpty 
-        ? uri 
+    final finalUri = queryParams.isEmpty
+        ? uri
         : uri.replace(queryParameters: queryParams);
 
     final res = await http.get(finalUri);
