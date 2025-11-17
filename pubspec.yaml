@@ -30,6 +30,10 @@ dependencies:
   # 📊 Librería para gráficos
   fl_chart: ^0.69.0
 
+    # 🧾 Generar e imprimir PDFs
+  pdf: ^3.11.1
+  printing: ^5.12.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -3,7 +3,6 @@ import 'package:http/http.dart' as http;
 import '../models/inventario_model.dart';
 
 class InventarioService {
-  // Cambia la URL a tu API real
   static const String baseUrl =
       "https://webapi20251108112945-d5c0b7fge9c6a8fh.westus-01.azurewebsites.net/api/Inventario";
 

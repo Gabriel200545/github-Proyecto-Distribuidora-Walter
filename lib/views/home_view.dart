@@ -1,5 +1,9 @@
 import 'package:distribuidora_app_new/views/asignar_rol_view.dart';
 import 'package:distribuidora_app_new/views/compra_view.dart';
+import 'package:distribuidora_app_new/views/consultar_compra_view.dart';
+import 'package:distribuidora_app_new/views/consultar_venta_view.dart';
+import 'package:distribuidora_app_new/views/devolucion_compra_view.dart';
+import 'package:distribuidora_app_new/views/devolucion_venta_view.dart';
 import 'package:distribuidora_app_new/views/inventario_lote_view.dart';
 import 'package:distribuidora_app_new/views/inventario_view.dart';
 import 'package:distribuidora_app_new/views/lote_view.dart';
@@ -12,7 +16,8 @@ import 'proveedor_view.dart';
 import 'usuario_view.dart';
 import 'rol_view.dart';
 import 'bodega_view.dart';
-import 'reportes_view.dart'; // <-- Importamos Reportes
+import 'reportes_view.dart';
+import 'venta_view.dart';
 
 class HomeViewPremium extends StatefulWidget {
   const HomeViewPremium({super.key});
@@ -23,7 +28,6 @@ class HomeViewPremium extends StatefulWidget {
 
 class _HomeViewPremiumState extends State<HomeViewPremium>
     with SingleTickerProviderStateMixin {
-  String _paginaActual = '';
   String _menuSeleccionado = '';
   late AnimationController _controller;
 
@@ -34,7 +38,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
     'Inventario': ['Lote', 'Inventario'],
     'Devolucion': ['Devolucion Compra', 'Devolucion Venta'],
     'Configuracion': ['Usuarios', 'Asignar Roles', 'Rol', 'Bodega'],
-    'Reportes': ['Diagramas'], // <-- Módulo agregado
+    'Reportes': ['Diagramas'],
   };
 
   final Map<String, IconData> menuIcons = {
@@ -44,7 +48,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
     'Inventario': Icons.inventory_2_outlined,
     'Devolucion': Icons.assignment_return_outlined,
     'Configuracion': Icons.settings_outlined,
-    'Reportes': Icons.pie_chart_outline, // <-- Icono para Reportes
+    'Reportes': Icons.pie_chart_outline,
   };
 
   final List<_Burbuja> _burbujas = List.generate(
@@ -148,9 +152,9 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: Text(
+                        child: const Text(
                           'Distribuidora Walter',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -161,17 +165,16 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                   ),
                 ),
               ),
-              Expanded(
+              const Expanded(
                 child: Center(
                   child: Text(
-                    _paginaActual.isEmpty
-                        ? 'Seleccione una opción del menú'
-                        : _paginaActual,
-                    style: const TextStyle(
+                    '',
+                    style: TextStyle(
                       color: Colors.white,
                       fontSize: 22,
                       fontWeight: FontWeight.w600,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ),
@@ -302,6 +305,8 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                 splashColor: Colors.white24,
                                 highlightColor: Colors.white10,
                                 onTap: () {
+                                  Navigator.of(context).pop(); // Cerrar Drawer
+
                                   switch (subitem) {
                                     case 'Categoría':
                                       Navigator.pushNamed(context, 'categoria');
@@ -313,8 +318,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ClienteView(),
+                                          builder: (_) => const ClienteView(),
                                         ),
                                       );
                                       break;
@@ -322,8 +326,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ProveedorView(),
+                                          builder: (_) => const ProveedorView(),
                                         ),
                                       );
                                       break;
@@ -331,8 +334,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const UsuarioView(),
+                                          builder: (_) => const UsuarioView(),
                                         ),
                                       );
                                       break;
@@ -340,7 +342,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
+                                          builder: (_) =>
                                               const AsignarRolView(),
                                         ),
                                       );
@@ -349,7 +351,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const RolView(),
+                                          builder: (_) => const RolView(),
                                         ),
                                       );
                                       break;
@@ -357,8 +359,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const BodegaView(),
+                                          builder: (_) => const BodegaView(),
                                         ),
                                       );
                                       break;
@@ -366,8 +367,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ProductoView(),
+                                          builder: (_) => const ProductoView(),
                                         ),
                                       );
                                       break;
@@ -375,7 +375,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
+                                          builder: (_) =>
                                               const UnidadMedidaView(),
                                         ),
                                       );
@@ -384,17 +384,33 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const CompraView(),
+                                          builder: (_) => const CompraView(),
                                         ),
                                       );
                                       break;
-                                    case 'Inventario':
+                                    case 'Consultar Compra':
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const InventarioLoteView(),
+                                          builder: (_) =>
+                                              const ConsultarCompraView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Registrar Venta':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const VentaView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Consultar Venta':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const ConsultarVentaView(),
                                         ),
                                       );
                                       break;
@@ -402,24 +418,45 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const LoteView(),
+                                          builder: (_) => const LoteView(),
                                         ),
                                       );
                                       break;
-                                    case 'Diagramas': // <-- Reportes
+                                    case 'Inventario':
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              const ReportesView(),
+                                          builder: (_) =>
+                                              const InventarioView(),
                                         ),
                                       );
                                       break;
-                                    default:
-                                      setState(() {
-                                        _paginaActual = subitem;
-                                      });
+                                    case 'Devolucion Compra':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const DevolucionCompraView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Devolucion Venta':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) =>
+                                              const DevolucionVentaView(),
+                                        ),
+                                      );
+                                      break;
+                                    case 'Diagramas':
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => const ReportesView(),
+                                        ),
+                                      );
+                                      break;
                                   }
                                 },
                                 child: Container(
@@ -429,7 +466,7 @@ class _HomeViewPremiumState extends State<HomeViewPremium>
                                   ),
                                   child: Row(
                                     children: [
-                                      Icon(
+                                      const Icon(
                                         Icons.circle,
                                         size: 10,
                                         color: Colors.white54,

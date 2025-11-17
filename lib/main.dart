@@ -3,6 +3,10 @@ import 'package:distribuidora_app_new/views/bodega_view.dart';
 import 'package:distribuidora_app_new/views/categoria_view.dart';
 import 'package:distribuidora_app_new/views/cliente_view.dart';
 import 'package:distribuidora_app_new/views/compra_view.dart';
+import 'package:distribuidora_app_new/views/consultar_compra_view.dart';
+import 'package:distribuidora_app_new/views/consultar_venta_view.dart';
+import 'package:distribuidora_app_new/views/devolucion_compra_view.dart';
+import 'package:distribuidora_app_new/views/devolucion_venta_view.dart';
 import 'package:distribuidora_app_new/views/inventario_lote_view.dart';
 import 'package:distribuidora_app_new/views/inventario_view.dart';
 import 'package:distribuidora_app_new/views/lote_view.dart';
@@ -10,6 +14,7 @@ import 'package:distribuidora_app_new/views/producto_view.dart';
 import 'package:distribuidora_app_new/views/rol_view.dart';
 import 'package:distribuidora_app_new/views/unidad_de_medida_view.dart';
 import 'package:distribuidora_app_new/views/usuario_view.dart';
+import 'package:distribuidora_app_new/views/venta_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'views/login_view.dart';
@@ -59,8 +64,13 @@ class MyApp extends StatelessWidget {
         'unidadMedida': (_) => const UnidadMedidaView(),
         'compra': (_) => const CompraView(),
         'lote': (_) => const LoteView(),
-        'inventario': (_) => const InventarioLoteView(),
-        'reportes': (_) => const ReportesView(), // <-- Ruta para Reportes
+        'inventario': (_) => const InventarioView(),
+        'reportes': (_) => const ReportesView(),
+        'consultarVenta': (_) => const ConsultarVentaView(),
+        'consultarCompra': (_) => const ConsultarCompraView(),
+        'venta': (_) => VentaView(),
+        'devolucioncompra': (_) => DevolucionCompraView(),
+        'devolucionVenta': (_) => DevolucionVentaView(),
       },
     );
   }
